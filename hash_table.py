@@ -40,6 +40,7 @@ class HashTable:
     def insert(self, key: object, value: object):
         index = self.hashing(key)
         
+        # TODO modularizar o while abaixo em um método de tratamento de colisão
         i = 1
         while self.__table[index] is not None:
             assert i < self.__length, 'Tabela cheia!'
@@ -53,6 +54,7 @@ class HashTable:
         index = self.hashing(key)
         assert self.__table[index] is not None, 'Nenhuma entrada correspondente!'
         
+        # TODO modularizar o while abaixo em um método de tratamento de colisão
         i = 1
         while self.__table[index].key != key:
             assert i < self.__length, 'Nenhuma entrada correspondente!'
