@@ -7,6 +7,7 @@ def is_prime(num: int) -> bool:
         return False
     return True
 
+
 def max_prime(num: int) -> int:
     for i in range(num, 1, -1):
         if is_prime(i):
@@ -14,11 +15,28 @@ def max_prime(num: int) -> int:
     return 2
 
 
+class FullTableException(Exception):
+
+    def __init__(self, msg: str):
+        super().__init__(msg)
+
+
+class AbsentKeyException(Exception):
+
+    def __init__(self, msg: str):
+        super().__init__(msg)
+
+
 class Entry:
-    
+
+    __slots__ = ('key', 'value')
+
     def __init__(self, key: object, value: object):
         self.key = key
         self.value = value
+
+    def __str__(self):
+        return f'({self.key} --> {self.value})'
 
 
 class HashTable:
@@ -31,34 +49,39 @@ class HashTable:
         return hash(key) % self.__length
         
     def hashing2(self, key: object) -> int:
-        prime = max_prime(self.length)
+        prime = max_prime(self.__length)
         return prime - (hash(key) % prime)
         
     def re_hashing(self, key: object, i: int = 1):
         return (self.hashing(key) + i * self.hashing2(key)) % self.__length
-    
+
     def insert(self, key: object, value: object):
         index = self.hashing(key)
-        
-        # TODO modularizar o while abaixo em um método de tratamento de colisão
+
+        # tratamento de colisão:
+        #   se a posição encontrada estiver preenchida:
+        #       recalcula a posição, exceto se a chave da entrada encontrada
+        #       for igual a passada pelo parâmetro key, nesse caso, o valor é apenas atualizado
         i = 1
-        while self.__table[index] is not None:
-            assert i < self.__length, 'Tabela cheia!'
+        while (self.__table[index] is not None) and (self.__table[index].key != key):
+            if i > self.__length:
+                raise FullTableException(f'A {self.__class__.__name__} já está cheia!')
             index = self.re_hashing(key, i)
             i += 1
             
         self.__table[index] = Entry(key, value)
-            
-        
+
     def get(self, key: object) -> object:
         index = self.hashing(key)
-        assert self.__table[index] is not None, 'Nenhuma entrada correspondente!'
-        
-        # TODO modularizar o while abaixo em um método de tratamento de colisão
+        if self.__table[index] is None:
+            raise AbsentKeyException(f'Nenhuma entrada para a chave {key} foi encontrada em {self.__class__.__name__}!')
+
         i = 1
         while self.__table[index].key != key:
-            assert i < self.__length, 'Nenhuma entrada correspondente!'
-            index = re_hashing(key, i)
+            if i > self.__length:
+                raise AbsentKeyException(
+                    f'Nenhuma entrada para a chave {key} foi encontrada em {self.__class__.__name__}!')
+            index = self.re_hashing(key, i)
             i += 1
             
         return self.__table[index].value
@@ -71,8 +94,8 @@ class HashTable:
         
 if __name__ == '__main__':
     
-    # Teste
-    ports = HashTable(24)
+    # Teste --> Apenas para debugar a hash table
+    ports = HashTable(4)
     
     while True:
         
