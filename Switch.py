@@ -1,10 +1,11 @@
 from Dispositivo import Dispositivo
+from hash_table import HashTable
 
 class Switch(Dispositivo):
     def __init__(self, nome: str, ip: str, mac: str, portas: int):
         super().__init__(nome, ip, mac)
         self.__portas = portas
-        self.__enderecos  = []
+        self.__enderecos  = HashTable(portas)
 
     @property
     def portas(self):
@@ -14,25 +15,25 @@ class Switch(Dispositivo):
     def portas(self, portas: int):
        self.__portas = portas
 
-    def addEndereco(self, endereco):
-        self.__enderecos.append(endereco)
+## OK
+    def addMac(self, mac, porta):
+        self.__enderecos.insert(mac, porta)
 
-    def buscar(self):
-        pass
+    ##OK
 
-    def adicionarDispositivo(self, porta: int, mac:str):
-        dispositivo = {'porta': porta, 'mac': mac}
-        self.__enderecos.append(dispositivo)
+    def buscar(self, mac: object):
+        return self.__enderecos.get(mac)
 
-    def exibirTabela(self):
-        for i in range(len(self.__enderecos)):
-            print(self.__enderecos[i])
+   # def adicionarDispositivo(self, porta: int, mac:str):
+       # dispositivo = HashTable(self.__portas)
+       # dispositivo.insert(mac, porta)
+       # self.__enderecos.append(dispositivo)
+##OK
+    def exibirTabelaMac(self):
+        self.__enderecos.print_entries()
 
     def haPortasEmUso(self):
-        if len(self.__enderecos) > 0:
-            return True
-        
-        return False
+        return self.__enderecos.haEntradasOcupadas()
     
     def returnEnderecos(self):
         return self.__enderecos

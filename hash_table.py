@@ -67,12 +67,11 @@ class HashTable:
         #       for igual a passada pelo parâmetro key, nesse caso, o valor é apenas atualizado
         i = 1
         while (self.__table[index] is not None) and (self.__table[index].key != key):
-            print(index)
             if i > self.__length:
                 raise FullTableException(f'A "{self.__class__.__name__}" já está cheia!')
             index = self.__re_hashing(key, i)
             i += 1
-        print('----------------------------------------')
+        
         self.__table[index] = Entry(key, value)
 
     def get(self, key: object) -> object:
@@ -92,9 +91,16 @@ class HashTable:
         return self.__table[index].value
         
     def print_entries(self):
-        for k, v in enumerate(self.__table):
+        for v in self.__table:
             if v:
-                print(k, v.key, v.value)
+                print("PORTA: "+v.value+", MAC: "+v.key)
+
+    def haEntradasOcupadas(self):
+        return any(self.__table)
+
+    def __iter__(self):
+        for row in self.__table:
+            yield row.key, row.value
 
 
 # Teste (Apenas para debugar a hash table):
