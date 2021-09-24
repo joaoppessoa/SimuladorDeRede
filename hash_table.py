@@ -44,44 +44,49 @@ class HashTable:
     def __init__(self, length: int):
         self.__length = length
         self.__table: list['Entry'] = [None] * length
+
+    @property
+    def length(self):
+        return self.__length
         
-    def hashing(self, key: object) -> int:
+    def __hashing(self, key: object) -> int:
         return hash(key) % self.__length
         
-    def hashing2(self, key: object) -> int:
+    def __hashing2(self, key: object) -> int:
         prime = max_prime(self.__length)
         return prime - (hash(key) % prime)
         
-    def re_hashing(self, key: object, i: int = 1):
-        return (self.hashing(key) + i * self.hashing2(key)) % self.__length
+    def __re_hashing(self, key: object, i: int = 1):
+        return (self.__hashing(key) + i * self.__hashing2(key)) % self.__length
 
     def insert(self, key: object, value: object):
-        index = self.hashing(key)
-
+        index = self.__hashing(key)
         # tratamento de colisão:
         #   se a posição encontrada estiver preenchida:
         #       recalcula a posição, exceto se a chave da entrada encontrada
         #       for igual a passada pelo parâmetro key, nesse caso, o valor é apenas atualizado
         i = 1
         while (self.__table[index] is not None) and (self.__table[index].key != key):
+            print(index)
             if i > self.__length:
-                raise FullTableException(f'A {self.__class__.__name__} já está cheia!')
-            index = self.re_hashing(key, i)
+                raise FullTableException(f'A "{self.__class__.__name__}" já está cheia!')
+            index = self.__re_hashing(key, i)
             i += 1
-            
+        print('----------------------------------------')
         self.__table[index] = Entry(key, value)
 
     def get(self, key: object) -> object:
-        index = self.hashing(key)
+        index = self.__hashing(key)
         if self.__table[index] is None:
-            raise AbsentKeyException(f'Nenhuma entrada para a chave {key} foi encontrada em {self.__class__.__name__}!')
+            raise AbsentKeyException(
+                f'Nenhuma entrada para a chave "{key}" foi encontrada em "{self.__class__.__name__}"!')
 
         i = 1
         while self.__table[index].key != key:
             if i > self.__length:
                 raise AbsentKeyException(
-                    f'Nenhuma entrada para a chave {key} foi encontrada em {self.__class__.__name__}!')
-            index = self.re_hashing(key, i)
+                    f'Nenhuma entrada para a chave "{key}" foi encontrada em "{self.__class__.__name__}"!')
+            index = self.__re_hashing(key, i)
             i += 1
             
         return self.__table[index].value
@@ -90,12 +95,18 @@ class HashTable:
         for k, v in enumerate(self.__table):
             if v:
                 print(k, v.key, v.value)
-        
-        
+
+
+# Teste (Apenas para debugar a hash table):
+
 if __name__ == '__main__':
-    
-    # Teste --> Apenas para debugar a hash table
-    ports = HashTable(4)
+
+    from random import randint
+
+    ports = HashTable(24)
+    for j in range(ports.length):
+        mac = ':'.join([f'{hex(randint(0, 255))[2:]:0>2}' for k in range(6)])
+        ports.insert(mac, randint(1, 24))
     
     while True:
         
@@ -111,7 +122,7 @@ if __name__ == '__main__':
             ports.insert(mac, port)
         elif opcao == '2':
             mac = input('\nDigite um MAC --> ')
-            print('-->',mac)
+            print('-->', mac)
             port = ports.get(mac)
             print(f'O MAC {mac} está na porta {port}')
         elif opcao == '3':
