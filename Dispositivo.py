@@ -29,3 +29,6 @@ class Dispositivo(ABC):
     @mac.setter
     def mac(self, mac: str):
         self.__mac = mac
+    
+    def __str__(self):
+        return ("Nome: %s, IP: %s, MAC: %s"%(self.__nome,self.__ip,self.__mac))

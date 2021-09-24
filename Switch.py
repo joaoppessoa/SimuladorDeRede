@@ -19,3 +19,23 @@ class Switch(Dispositivo):
 
     def buscar(self):
         pass
+
+    def adicionarDispositivo(self, porta: int, mac:str):
+        dispositivo = {'porta': porta, 'mac': mac}
+        self.__enderecos.append(dispositivo)
+
+    def exibirTabela(self):
+        for i in range(len(self.__enderecos)):
+            print(self.__enderecos[i])
+
+    def haPortasEmUso(self):
+        if len(self.__enderecos) > 0:
+            return True
+        
+        return False
+    
+    def returnEnderecos(self):
+        return self.__enderecos
+
+    def __str__(self):
+        return f''' {super().__str__()}, Nº Portas: {self.portas} '''
