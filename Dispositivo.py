@@ -1,10 +1,24 @@
 from abc import ABC, abstractmethod
+from re import match
+
+
+class MacInvalido(Exception):
+
+    def __init__(self, msg):
+        super().__init__(msg)
+
 
 class Dispositivo(ABC):
+
     def __init__(self, nome: str, ip: str, mac: str):
+
+        if not Dispositivo.__MAC_valido(mac):
+            print('ex')
+            raise MacInvalido('MAC inválido')
+
         self.__nome = nome
         self.__ip   = ip
-        self.__mac  = mac 
+        self.__mac  = mac
     
     @property
     def nome(self):
@@ -23,12 +37,16 @@ class Dispositivo(ABC):
         self.__nome = nome
 
     @ip.setter
-    def portas(self, ip: str):
-        self.__ip = portas
+    def ip(self, ip: str):
+        self.__ip = ip
     
     @mac.setter
     def mac(self, mac: str):
         self.__mac = mac
+
+    @staticmethod
+    def __MAC_valido(mac: str) -> bool:
+        return match('^(([0-9a-f]{2}):){5}([0-9a-f]{2})$', mac.lower())
     
     def __str__(self):
         return ("Nome: %s, IP: %s, MAC: %s"%(self.__nome,self.__ip,self.__mac))

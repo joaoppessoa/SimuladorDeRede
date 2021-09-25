@@ -1,20 +1,3 @@
-def is_prime(num: int) -> bool:
-    num = abs(num)
-    for i in range(2, (num // 2) + 1):
-        if num % i == 0:
-            return False
-    if num < 2:
-        return False
-    return True
-
-
-def max_prime(num: int) -> int:
-    for i in range(num, 1, -1):
-        if is_prime(i):
-            return i
-    return 2
-
-
 class FullTableException(Exception):
 
     def __init__(self, msg: str):
@@ -52,12 +35,8 @@ class HashTable:
     def __hashing(self, key: object) -> int:
         return hash(key) % self.__length
         
-    def __hashing2(self, key: object) -> int:
-        prime = max_prime(self.__length)
-        return prime - (hash(key) % prime)
-        
     def __re_hashing(self, key: object, i: int = 1):
-        return (self.__hashing(key) + i * self.__hashing2(key)) % self.__length
+        return (hash(key) + i) % self.length
 
     def insert(self, key: object, value: object):
         index = self.__hashing(key)
@@ -93,17 +72,20 @@ class HashTable:
     def print_entries(self):
         for v in self.__table:
             if v:
-                print("PORTA: "+v.value+", MAC: "+v.key)
+                print(f'PORTA: {v.value}, MAC: {v.key}')
 
     def haEntradasOcupadas(self):
         return any(self.__table)
 
     def __iter__(self):
         for row in self.__table:
-            yield row.key, row.value
+            if row:
+                yield row.key, row.value
 
 
+# ---------------------------------------- #
 # Teste (Apenas para debugar a hash table):
+# ---------------------------------------- #
 
 if __name__ == '__main__':
 

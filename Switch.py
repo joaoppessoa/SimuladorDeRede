@@ -1,11 +1,17 @@
-from Dispositivo import Dispositivo
+from Dispositivo import *
 from hash_table import HashTable
+
 
 class Switch(Dispositivo):
     def __init__(self, nome: str, ip: str, mac: str, portas: int):
-        super().__init__(nome, ip, mac)
-        self.__portas = portas
-        self.__enderecos  = HashTable(portas)
+        assert portas == 4 or portas == 8 or portas == 16 or portas == 24
+
+        try:
+            super().__init__(nome, ip, mac)
+            self.__portas = portas
+            self.__enderecos = HashTable(portas)
+        except MacInvalido as mi:
+            raise mi
 
     @property
     def portas(self):
@@ -13,7 +19,7 @@ class Switch(Dispositivo):
     
     @portas.setter
     def portas(self, portas: int):
-       self.__portas = portas
+        self.__portas = portas
 
 ## OK
     def addMac(self, mac, porta):
