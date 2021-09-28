@@ -63,7 +63,7 @@ class Grafo:
 		self.__vertices.append(vertice)
 		return vertice
 
-	def adicionarAresta(self, origem: 'Vertice', destino: 'Vertice') -> 'Aresta':
+	def adicionarAresta(self, origem: 'Vertice', destino: 'Vertice') -> tuple('Aresta'):
 		aresta_origem = Aresta(origem, destino)
 		aresta_destino = Aresta(destino, origem)
 		origem.adjs.append(aresta_origem)
@@ -124,6 +124,21 @@ if __name__ == '__main__':
 	rede.adicionarAresta(pc2, sw1)
 	rede.adicionarAresta(pc3, sw1)
 	rede.adicionarAresta(pc4, sw1)
-
+	
+	print(f'Adjacencias:')
 	for v in rede.percorrer(pc3):
 	    print(v)
+	print()
+	    
+	# pesquisa MAC por IP (ARP)
+	ip = '192.168.1.13'
+	for v in rede.percorrer(pc2):
+	    print(f'pesquisando por {ip} em {v.dado[1]}... ')
+	    if v.dado[1] == ip:
+	        print('pesquisa concluída... ')
+	        print(f'o MAC de {ip} é {v.dado[2]}')
+	        break
+	else:
+	    print('ip não existe na rede... ')
+
+	
