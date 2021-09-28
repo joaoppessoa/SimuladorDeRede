@@ -64,12 +64,15 @@ class Grafo:
 		return vertice
 
 	def adicionarAresta(self, origem: 'Vertice', destino: 'Vertice') -> 'Aresta':
-		aresta = Aresta(origem, destino)
-		origem.adjs.append(aresta)
-		self.__arestas.append(aresta)
-		return aresta
+		aresta_origem = Aresta(origem, destino)
+		aresta_destino = Aresta(destino, origem)
+		origem.adjs.append(aresta_origem)
+		destino.adjs.append(aresta_destino)
+		self.__arestas.append(aresta_origem)
+		self.__arestas.append(aresta_destino)
+		return aresta_origem, aresta_destino
 
-	def buscar(self, chave: object, origem: 'Vertice') -> 'Vertice':
+	def percorrer(self, origem: 'Vertice') -> 'Vertice':
 		# Busca BFS (Breadth-First Search)
 		# Marcar todos os vértices como não visitado (verts.value = False)
 		verts = HashTable(self.qtdVertices())
@@ -86,11 +89,9 @@ class Grafo:
 			for w in v.adjs:
 				w = w.destino
 				if not verts.get(w):
-					# processe w
-					print('-->', w)
-					# -- #
-					verts.insert(w, True)
-					fila.append(w)
+				    yield w
+				    verts.insert(w, True)
+				    fila.append(w)
 
 	def qtdVertices(self):
 		return len(self.__vertices)
@@ -124,4 +125,5 @@ if __name__ == '__main__':
 	rede.adicionarAresta(pc3, sw1)
 	rede.adicionarAresta(pc4, sw1)
 
-	rede.buscar('', pc1)
+	for v in rede.percorrer(pc3):
+	    print(v)
