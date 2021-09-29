@@ -106,7 +106,7 @@ class Grafo:
 		for v in self.__vertices:
 			grafo_str += f'{v.dado} --> '
 			for a in v.adjs:
-				grafo_str += str(a.destino.dado)
+				grafo_str += f'{a.destino.dado} ; '
 			grafo_str += '\n'
 
 		return grafo_str
