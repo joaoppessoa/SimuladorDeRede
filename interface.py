@@ -1,36 +1,54 @@
-from Dispositivo import MacInvalido
-from Switch import Switch
+import topologia
+
+from Dispositivo import MacInvalidoException
 from hash_table import *
+from Switch import InvalidPortNumberException
 from SwitchModel import *
 
 
-def exibir_swiches(lista):
-	for i, sw in enumerate(lista):
-		print(i, sw)
+# Função para exibir a lista de switches ou computadores
+def exibir_dispositivos(lista):
+	try:
+		print('\033[1;36m-------------------------------------')
+		print(f'{"Seus " + lista[0].__class__.__name__ + "es":^35}')
+		print('-------------------------------------')
+	except IndexError:
+		print('A lista de dispositivos está vazia!')
+	else:
+		for i, disp in enumerate(lista):
+			print(i, disp)
+
+		print('-------------------------------------\033[0;0m')
+
 
 lista_de_switches = index()
+lista_de_computadores = []
 
-print("Bem vindo ao Gerenciador de Switches\n")
+print('\n-------------------------------------')
+print("Bem vindo ao Gerenciador de dispositivos".upper())
 
 opcao = None
 
 while opcao != '0':
 
-	print('-------------------------------------')
-	print('\nSeus switches:\n')
-	exibir_swiches(lista_de_switches)
+	exibir_dispositivos(lista_de_switches)
 
 	print()
-	print('Escolha a opção a seguir :\n')
+	print('Escolha uma das opções a seguir :\n')
 	print('1 - Cadastrar switch')
-	print('2 - Exibir switches')
-	print('3 - Conectar dispositivo')
-	print('4 - Descobrir porta')
+	print('2 - Cadastrar computador')
+	print('3 - Exibir switches')
+	print('4 - Exibir computadores')
+	print('5 - Adicionar MAC em switch')
+	print('6 - Descobrir porta por MAC')
+	print('7 - Descobrir MAC por IP (ARP)')
+	print('8 - Exibir dispositivos na topologia de rede')
 	print('0 - Salvar e sair do gerenciador')
 
 	opcao = input('\nOpção --> ')
 	print()
 
+	# cadastrar switch
 	if opcao == '1':
 		# possíveis excessões
 		# Mac inválido ex
@@ -41,72 +59,110 @@ while opcao != '0':
 			try:
 				novo_switch = None
 				while True:
-					print('DIGITE OS DADOS DO NOVO SWITCH')
+					print('\033[1;33mDIGITE OS DADOS DO NOVO SWITCH')
 					nome = input('Nome --> ')
 					ip = input('IP --> ')
 					mac = input('MAC --> ')
-					portas = int(input('Quantidade de portas [4, 8, 16 ou 24] --> '))
+					portas = int(input('Quantidade de portas [4, 8, 16 ou 24] --> \033[0;0m'))
 
 					if not nome and not ip and not mac:
-						print('Não são permitidos campos vazios!\n')
+						print('\033[1;31mNão são permitidos campos vazios!\n\033[0;0m')
 						continue
 					novo_switch = Switch(nome, ip, mac, portas)
 					break
 			except ValueError:
-				print('No campo portas são permitidos apenas valores numéricos!')
-			except AssertionError:
-				print('O switch pode possuir apenas 4, 8, 16 ou 24 portas!')
-			except MacInvalido:
-				print('O MAC digitado não é válido!')
+				print('\033[1;31mNo campo portas são permitidos apenas valores numéricos!\033[0;0m')
+			except InvalidPortNumberException as ipne:
+				print(f'\033[1;31m{ipne}\033[0;0m')
+			except MacInvalidoException as mie:
+				print(f'\033[1;31m{mie}\033[0;0m')
 			else:
 				lista_de_switches.append(novo_switch)
-				print('Switch cadastrado com sucesso!')
+				print('\033[1;32mSwitch cadastrado com sucesso!\033[0;0m')
 				break
 
+	# cadastrar computador
 	elif opcao == '2':
-		exibir_swiches(lista_de_switches)
+		print('\033[1;33mAinda não implementado!\033[0;0m')
+
+	# exibir switches
 	elif opcao == '3':
+		exibir_dispositivos(lista_de_switches)
+
+	# exibir computadores
+	elif opcao == '4':
+		exibir_dispositivos(lista_de_computadores)
+
+	# Conectar dispositivo em switch
+	elif opcao == '5':
 		while True:
 			try:
-				exibir_swiches(lista_de_switches)
+				exibir_dispositivos(lista_de_switches)
 				print()
-				sw = int(input('Em qual switch deseja conectar o dispositivo? '))
-				mac = input('Digite o MAC do dispositivo que deseja conectar: ')
-				porta = int(input('Digite a porta do dispositivo que deseja conectar: '))
+				sw = int(input('\033[1;33mEm qual switch deseja adicionar um MAC na tabela? '))
+				mac = input('Digite o MAC do dispositivo que será conectado: ')
+				porta = int(input('Digite a porta na qual o dispositivo será conectado: \033[0;0m'))
 
 				lista_de_switches[sw].addMac(mac, porta)
 			except ValueError:
-				print('Digite apenas valores numéricos no switch e na porta!')
+				print('\033[1;31mDigite apenas valores numéricos para os campos switch e porta!\033[0;0m')
 			except IndexError:
-				print('Switche não encontrado!')
-			except MacInvalido:
-				print('O MAC digitado não é válido!')
+				print('\033[1;31mSwitch não encontrado!\033[0;0m')
+			except InvalidPortNumberException as ipne:
+				print(f'\033[1;31m{ipne}\033[0;0m')
+			except AssertionError as ae:
+				print(f'\033[1;31m{ae}\033[0;0m')
+			except MacInvalidoException as mie:
+				print(f'\033[1;31m{mie}\033[0;0m')
 			except FullTableException:
-				print('A tabela MAC do switch já está cheia!')
+				print('\033[1;31mA tabela MAC do switch já está cheia!\033[0;0m')
 			else:
-				print('Dispositivo conectado!!')
+				print('\033[1;32mDispositivo conectado!!\033[0;0m')
 				break
-	elif opcao == '4':
+
+	# Descobrir porta por MAC
+	elif opcao == '6':
 		while True:
 			try:
-				exibir_swiches(lista_de_switches)
+				exibir_dispositivos(lista_de_switches)
 				print()
-				sw = int(input('Em qual switch deseja conectar o dispositivo? '))
-				mac = input('Digite o MAC do dispositivo que deseja pesquisar a porta: ')
+				sw = int(input('\033[1;33mEm qual switch deseja fazer a pesquisa de porta? '))
+				mac = input('Digite o MAC do dispositivo que deseja pesquisar a porta: \033[0;0m')
 
-				print('A porta é', lista_de_switches[sw].buscar(mac))
+				print(f'\033[1;32mA porta é {lista_de_switches[sw].buscar(mac)}\033[0;0m')
 			except ValueError:
-				print('Digite apenas valores numéricos no switch!')
+				print('\033[1;31mDigite apenas valores numéricos no switch!\033[0;0m')
 			except IndexError:
-				print('Switch não encontrado!')
-			except MacInvalido:
-				print('O MAC digitado não é válido!')
+				print('\033[1;31mSwitch não encontrado!\033[0;0m')
+			except MacInvalidoException as mie:
+				print(f'\033[1;31m{mie}\033[0;0m')
 			except AbsentKeyException:
-				print('O MAC pesquisado não existe na tabela MAC deste switch!')
+				print('\033[1;31mO MAC pesquisado não existe na tabela MAC deste switch!\033[0;0m')
 			else:
 				break
+
+	# Descobrir MAC por IP (ARP)
+	elif opcao == '7':
+		exibir_dispositivos(lista_de_computadores)
+		pc = int(input('De qual computador deseja fazer a solicitação ARP? '))
+		ip = input('IP do dispositivo que deseja descobrir o MAC? ')
+
+		topologia.ARP(None, ip)
+
+	# exibir dispositivos da topologia
+	elif opcao == '8':
+		for d in topologia.rede.percorrer():
+			print(d)
+
+
+	# Salvar e sair
 	elif opcao == '0':
 		salvar(lista_de_switches)
-		print('bye')
+		print('\033[1;34mbye')
+		continue
+
+	# Opção indisponível
 	else:
-		print('Opção indispnível')
+		print('\033[1;31mOpção indisponível\033[0;0m')
+
+	input('\n\033[1;36mENTER para retornar ao menu... \n\033[0;0m')

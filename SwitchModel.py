@@ -18,7 +18,7 @@ def index():
                     for enderecos in tabelaMac:
                         enderecoArray = enderecos.split('-')
 
-                        switch.addMac(enderecoArray[1], enderecoArray[0])
+                        switch.addMac(enderecoArray[1], int(enderecoArray[0]))
 
                 listaDeSwitch.append(switch)
             else:
@@ -44,8 +44,3 @@ def salvar(lista: list):
                 arquivo.writerow([switch.nome, switch.ip, switch.mac, switch.portas, tabela_mac_string])
             else:
                 arquivo.writerow([switch.nome, switch.ip, switch.mac, switch.portas])
-
-
-a = index()
-
-salvar(a)
