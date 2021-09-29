@@ -6,12 +6,9 @@ class Switch(Dispositivo):
     def __init__(self, nome: str, ip: str, mac: str, portas: int):
         assert portas == 4 or portas == 8 or portas == 16 or portas == 24
 
-        try:
-            super().__init__(nome, ip, mac)
-            self.__portas = portas
-            self.__enderecos = HashTable(portas)
-        except MacInvalido as mi:
-            raise mi
+        super().__init__(nome, ip, mac)
+        self.__portas = portas
+        self.__enderecos = HashTable(portas)
 
     @property
     def portas(self):
@@ -23,6 +20,8 @@ class Switch(Dispositivo):
 
 ## OK
     def addMac(self, mac, porta):
+        if not Dispositivo.MAC_valido(mac):
+            raise MacInvalidoException('MAC inválido!')
         self.__enderecos.insert(mac, porta)
 
     ##OK

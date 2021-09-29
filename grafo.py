@@ -1,3 +1,6 @@
+from hash_table import *
+
+
 class Vertice:
 
 	def __init__(self, dado: object):
@@ -49,9 +52,6 @@ class Aresta:
 		return f'{self.__origem} -------- {self.__destino}'
 
 
-from hash_table import *
-
-
 class Grafo:
 
 	def __init__(self):
@@ -63,7 +63,7 @@ class Grafo:
 		self.__vertices.append(vertice)
 		return vertice
 
-	def adicionarAresta(self, origem: 'Vertice', destino: 'Vertice') -> tuple('Aresta'):
+	def adicionarAresta(self, origem: 'Vertice', destino: 'Vertice') -> tuple['Aresta', 'Aresta']:
 		aresta_origem = Aresta(origem, destino)
 		aresta_destino = Aresta(destino, origem)
 		origem.adjs.append(aresta_origem)
@@ -72,7 +72,9 @@ class Grafo:
 		self.__arestas.append(aresta_destino)
 		return aresta_origem, aresta_destino
 
-	def percorrer(self, origem: 'Vertice') -> 'Vertice':
+	def percorrer(self, origem: 'Vertice'):
+		assert origem in self.__vertices, 'O vértice de origem não existe no grafo!'
+
 		# Busca BFS (Breadth-First Search)
 		# Marcar todos os vértices como não visitado (verts.value = False)
 		verts = HashTable(self.qtdVertices())
@@ -89,9 +91,9 @@ class Grafo:
 			for w in v.adjs:
 				w = w.destino
 				if not verts.get(w):
-				    yield w
-				    verts.insert(w, True)
-				    fila.append(w)
+					yield w
+					verts.insert(w, True)
+					fila.append(w)
 
 	def qtdVertices(self):
 		return len(self.__vertices)
@@ -110,6 +112,10 @@ class Grafo:
 		return grafo_str
 
 
+# ---------------------------------------- #
+# Teste (Apenas para debugar o grafo):
+# ---------------------------------------- #
+
 if __name__ == '__main__':
 
 	rede = Grafo()
@@ -124,21 +130,21 @@ if __name__ == '__main__':
 	rede.adicionarAresta(pc2, sw1)
 	rede.adicionarAresta(pc3, sw1)
 	rede.adicionarAresta(pc4, sw1)
-	
+
 	print(f'Adjacencias:')
-	for v in rede.percorrer(pc3):
-	    print(v)
+	for v in rede.percorrer(pc2):
+		print(v)
 	print()
-	    
+
 	# pesquisa MAC por IP (ARP)
 	ip = '192.168.1.13'
 	for v in rede.percorrer(pc2):
-	    print(f'pesquisando por {ip} em {v.dado[1]}... ')
-	    if v.dado[1] == ip:
-	        print('pesquisa concluída... ')
-	        print(f'o MAC de {ip} é {v.dado[2]}')
-	        break
+		print(f'pesquisando por {ip} em {v.dado[1]}... ')
+		if v.dado[1] == ip:
+			print('pesquisa concluída... ')
+			print(f'o MAC de {ip} é {v.dado[2]}')
+			break
 	else:
-	    print('ip não existe na rede... ')
+		print('ip não existe na rede... ')
 
 	
