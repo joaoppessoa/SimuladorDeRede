@@ -2,9 +2,16 @@ from Dispositivo import *
 from hash_table import HashTable
 
 
+class InvalidPortNumberException(Exception):
+
+    def __init__(self, msg):
+        super().__init__(msg)
+
+
 class Switch(Dispositivo):
     def __init__(self, nome: str, ip: str, mac: str, portas: int):
-        assert portas == 4 or portas == 8 or portas == 16 or portas == 24
+        if not(portas == 4 or portas == 8 or portas == 16 or portas == 24):
+            raise InvalidPortNumberException('Número de porta inválido [Valores aceitos são --> 4, 8, 16 ou 24]')
 
         super().__init__(nome, ip, mac)
         self.__portas = portas
@@ -20,8 +27,10 @@ class Switch(Dispositivo):
 
 ## OK
     def addMac(self, mac, porta):
+        assert 0 < porta <= self.__portas, f'A porta informada não existe no switch, ' \
+                                           f'informe valores entre 1 e {self.__portas}'
         if not Dispositivo.MAC_valido(mac):
-            raise MacInvalidoException('MAC inválido!')
+            raise MacInvalidoException('O MAC fornecido é inválido!')
         self.__enderecos.insert(mac, porta)
 
     ##OK

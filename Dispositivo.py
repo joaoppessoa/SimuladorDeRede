@@ -13,7 +13,7 @@ class Dispositivo(ABC):
     def __init__(self, nome: str, ip: str, mac: str):
 
         if not Dispositivo.MAC_valido(mac):
-            raise MacInvalidoException('MAC inválido')
+            raise MacInvalidoException('O MAC fornecido é inválido')
 
         self.__nome = nome
         self.__ip   = ip
