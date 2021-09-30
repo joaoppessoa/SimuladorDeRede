@@ -1,4 +1,3 @@
-exempo1;192.168.0.1;00:E0:4C:0B:DE:CE;4;2-00:E0:4C:1D:E4:A0,1-00:E0:4C:4C:56:5B
-teste2;192.168.1.2;ff:ff:ff:ff:ff:ff;24
-teste3;192.168.1.2;aa:aa:aa:aa:aa:aa;8
-abc;123;ee:ee:ee:ee:ee:ee;16;2-ff:ff:ff:ff:ff:ff
+s1;192.168.0.9/24;aa:aa:aa:aa:aa:aa;4;1-38:a4:65:a6:61:5c
+s2;192.168.0.11/24;38:a4:65:a6:61:5c;8;1-aa:aa:aa:aa:aa:aa,2-bb:bb:bb:bb:bb:bb
+s3;192.168.1.9/24;bb:bb:bb:bb:bb:bb;4;1-38:a4:65:a6:61:5c
