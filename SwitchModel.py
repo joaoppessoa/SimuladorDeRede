@@ -5,7 +5,7 @@ from Switch import Switch
 def index():
     listaDeSwitch = []
 
-    with open('banco.csv') as csv_file:
+    with open('switchs.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=';')
 
         for row in csv_reader:
@@ -28,7 +28,7 @@ def index():
 
 
 def salvar(lista: list):
-    with open('banco.csv', 'w', newline='') as csv_file:
+    with open('switchs.csv', 'w', newline='') as csv_file:
         arquivo = csv.writer(csv_file, delimiter=';')
 
         for switch in lista:

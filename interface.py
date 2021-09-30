@@ -4,7 +4,7 @@ from Dispositivo import MacInvalidoException
 from hash_table import *
 from Switch import InvalidPortNumberException
 from SwitchModel import *
-
+import ComputadorModel
 
 # Função para exibir a lista de switches ou computadores
 def exibir_dispositivos(lista):
@@ -22,7 +22,7 @@ def exibir_dispositivos(lista):
 
 
 lista_de_switches = index()
-lista_de_computadores = []
+lista_de_computadores = ComputadorModel.index()
 
 print('\n-------------------------------------')
 print("Bem vindo ao Gerenciador de dispositivos".upper())
