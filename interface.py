@@ -4,7 +4,9 @@ from Dispositivo import MacInvalidoException
 from hash_table import *
 from Switch import InvalidPortNumberException
 from SwitchModel import *
+from grafo import ConnectionNotPermitedException
 import ComputadorModel
+
 
 # Função para exibir a lista de switches ou computadores
 def exibir_dispositivos(lista):
@@ -21,8 +23,22 @@ def exibir_dispositivos(lista):
 		print('-------------------------------------\033[0;0m')
 
 
+def exibir_topologia():
+	print('\033[1;33m-------------------------------------')
+	print(f'{"Dispositivos de sua topologia atual:":^35}')
+	print('-------------------------------------')
+	topologia.mostrar_topologia()
+	print('\033[0;0m')
+
+
 lista_de_switches = index()
 lista_de_computadores = ComputadorModel.index()
+
+try:
+	topologia.carregar_topologia(lista_de_computadores, lista_de_switches)
+except ConnectionNotPermitedException as cnpe:
+	print(cnpe)
+
 
 print('\n-------------------------------------')
 print("Bem vindo ao Gerenciador de dispositivos".upper())
@@ -83,7 +99,26 @@ while opcao != '0':
 
 	# cadastrar computador
 	elif opcao == '2':
-		print('\033[1;33mAinda não implementado!\033[0;0m')
+		while True:
+			try:
+				novo_pc = None
+				while True:
+					print('\033[1;33mDIGITE OS DADOS DO NOVO COMPUTADOR')
+					nome = input('Nome --> ')
+					ip = input('IP --> ')
+					mac = input('MAC --> ')
+
+					if not nome and not ip and not mac:
+						print('\033[1;31mNão são permitidos campos vazios!\n\033[0;0m')
+						continue
+					novo_pc = ComputadorModel.Computador(nome, ip, mac)
+					break
+			except MacInvalidoException as mie:
+				print(f'\033[1;31m{mie}\033[0;0m')
+			else:
+				lista_de_computadores.append(novo_pc)
+				print('\033[1;32mComputador cadastrado com sucesso!\033[0;0m')
+				break
 
 	# exibir switches
 	elif opcao == '3':
@@ -143,21 +178,30 @@ while opcao != '0':
 
 	# Descobrir MAC por IP (ARP)
 	elif opcao == '7':
-		exibir_dispositivos(lista_de_computadores)
-		pc = int(input('De qual computador deseja fazer a solicitação ARP? '))
-		ip = input('IP do dispositivo que deseja descobrir o MAC? ')
+		try:
+			exibir_topologia()
+			pc = int(input('De qual dispositivo deseja fazer a solicitação ARP? '))
+			ip = input('IP do dispositivo que deseja descobrir o MAC? ')
 
-		topologia.ARP(None, ip)
+			mac = topologia.ARP(ip, topologia.dispositivos[pc])
+		except ValueError:
+			print('O código do dispositivo deve ser numérico!')
+		except IndexError:
+			print('O computador não existe na topologia!')
+		else:
+			if mac is None:
+				print('MAC não encontrado!')
+			else:
+				print(f'O MAC de {ip} é {mac}')
 
 	# exibir dispositivos da topologia
 	elif opcao == '8':
-		for d in topologia.rede.percorrer():
-			print(d)
-
+		exibir_topologia()
 
 	# Salvar e sair
 	elif opcao == '0':
 		salvar(lista_de_switches)
+		ComputadorModel.salvar(lista_de_computadores)
 		print('\033[1;34mbye')
 		continue
 

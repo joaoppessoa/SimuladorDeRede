@@ -25,7 +25,6 @@ class Switch(Dispositivo):
     def portas(self, portas: int):
         self.__portas = portas
 
-## OK
     def addMac(self, mac, porta):
         assert 0 < porta <= self.__portas, f'A porta informada não existe no switch, ' \
                                            f'informe valores entre 1 e {self.__portas}'
@@ -33,16 +32,9 @@ class Switch(Dispositivo):
             raise MacInvalidoException('O MAC fornecido é inválido!')
         self.__enderecos.insert(mac, porta)
 
-    ##OK
-
     def buscar(self, mac: object):
         return self.__enderecos.get(mac)
 
-   # def adicionarDispositivo(self, porta: int, mac:str):
-       # dispositivo = HashTable(self.__portas)
-       # dispositivo.insert(mac, porta)
-       # self.__enderecos.append(dispositivo)
-##OK
     def exibirTabelaMac(self):
         self.__enderecos.print_entries()
 
@@ -53,4 +45,4 @@ class Switch(Dispositivo):
         return self.__enderecos
 
     def __str__(self):
-        return f''' {super().__str__()}, Nº Portas: {self.portas} '''
+        return f'''{super().__str__()}, Nº Portas: {self.portas} '''

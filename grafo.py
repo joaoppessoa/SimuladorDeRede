@@ -1,4 +1,11 @@
 from hash_table import *
+from Computador import Computador
+
+
+class ConnectionNotPermitedException(Exception):
+
+	def __init__(self, msg):
+		super().__init__(msg)
 
 
 class Vertice:
@@ -64,6 +71,9 @@ class Grafo:
 		return vertice
 
 	def adicionarAresta(self, origem: 'Vertice', destino: 'Vertice') -> tuple['Aresta', 'Aresta']:
+		if isinstance(origem.dado, Computador) and isinstance(destino.dado, Computador):
+			raise ConnectionNotPermitedException('conexão não permitida')
+
 		aresta_origem = Aresta(origem, destino)
 		aresta_destino = Aresta(destino, origem)
 		origem.adjs.append(aresta_origem)
